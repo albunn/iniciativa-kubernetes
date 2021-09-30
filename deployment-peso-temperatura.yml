@@ -1,0 +1,75 @@
+#deployment app controle-peso e controle-temperatura
+#Deployment controle-peso
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-peso
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-peso
+    template:
+      metadata:
+        labels:
+          app: web-peso
+      spec:
+      containers:
+        - name: web-peso
+          image: alexandrebunn/controle-peso:v1
+          ports:
+            - containerPort: 8080
+---
+
+#Service do controle-peso
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-peso
+spec:
+  selector:
+    app: web-peso
+  ports:
+    - port: 80
+      targetPort: 8080
+      NodePort: 30001
+      protocol: TCP
+  type: NodePort
+---
+
+#Deployment do controle-temperatura
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-temperatura
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-temperatura
+    template:
+      metadata:
+        labels:
+          app: web-temperatura
+      spec:
+      containers:
+        - name: web-temperatura
+          image: alexandrebunn/controle-temperatura:v1
+          ports:
+            - containerPort: 8080
+---
+
+#Service do controle-temperatura
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-temperatura
+spec:
+  selector:
+    app: web-temperatura
+  ports:
+    - port: 80
+      targetPort: 8080
+      NodePort: 30000
+      protocol: TCP
+  type: NodePort
