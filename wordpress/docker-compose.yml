@@ -1,0 +1,46 @@
+version: '3.8'
+
+volumes:
+  mariadbwp_vol:
+  wordpresshtml_vol:
+
+networks:
+  wordpress_net:
+    driver: bridge
+
+services:
+  wplab:
+    image: wordpress
+    container_name: wplab
+    ports:
+      - 8080:80
+    networks:
+      - wordpress_net
+    depends_on:
+      - mariadblab
+    volumes:
+      - wordpresshtml_vol:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: mariadblab
+      WORDPRESS_DB_USER: wplab
+      WORDPRESS_DB_PASSWORD: wpl4bp4ss
+      WORDPRESS_DB_NAME: wplab
+      WORDPRESS_TABLE_PREFIX: wpl4b_
+      WORDPRESS_CONFIG_EXTRA: |
+        define('FS_METHOD','direct');
+
+  mariadblab:
+    image: mariadb:10.6.4
+    container_name: mariadbwp
+    ports:
+      - 3306:3306
+    networks:
+      - wordpress_net
+    volumes:
+      - mariadbwp_vol:/var/lib/mysql
+    environment:
+      MARIADB_ROOT_PASSWORD: my-secret-pw
+      MARIADB_USER: wplab
+      MARIADB_PASSWORD: wpl4bp4ss
+      MARIADB_DATABASE: wplab
+      
