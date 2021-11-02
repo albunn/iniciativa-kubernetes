@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.7'
 
 volumes:
   mongorpws_vol:
@@ -9,8 +9,9 @@ networks:
     driver: bridge
 
 services:
-  rpws:
-    image: alexandrebunn/rotten-potatoes:v1
+  rpwsapp:
+    image: "alexandrebunn/rotten-potatoes-ms:${RPMS_VERSION:?err}"
+    container_name: rpwsapp
     ports:
       - 5000:5000
     networks:
@@ -19,11 +20,11 @@ services:
       - movie
       - review
     environment:
-      MOVIE_SERVICE_URI: http://movies:8181
+      MOVIE_SERVICE_URI: http://movie:8181
       REVIEW_SERVICE_URI: http://review:8282
 
   movie:
-    image: alexandrebunn/movie:${MOVIEAPP_VERSION:?err}
+    image: "alexandrebunn/movie:${MOVIEAPP_VERSION:?err}"
     ports:
       - 8081:8081
     networks:
@@ -31,24 +32,24 @@ services:
     depends_on:
       - mongodb
     environment:
-      MONGODB_URI: mongodb://mongoadmin:secret@mongodb:27017/admin
+      MONGODB_URI: mongodb://mongouser:mongopwd@mongodb:27017/admin
 
   mongodb:
-    image: mongo:${MONGO_VERSION:?err}
+    image: "mongo:${MONGO_VERSION}"
     container_name: mongorpws
     ports:
       - 27017:27017
     networks:
       - rpws_net
     volumes:
-      - mongorrpws_vol:/data/db
+      - mongorpws_vol:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongouser
       MONGO_INITDB_ROOT_PASSWORD: mongopwd
       MONGO_INITDB_ROOT_DATABASE: admin
 
   review:
-    image: alexandrebunn/review:${REVIEWAPP_VERSION:?err}
+    image: "alexandrebunn/review:${REVIEWAPP_VERSION:?err}"
     ports:
       - 8282:80
     networks:
@@ -59,7 +60,7 @@ services:
       ConnectionStrings__MyConnection: Host=pgsql;Database=postgres;Username=postgres;Password=mysecretpassword;
 
   pgsql:
-    image: mongo:${PGSQL_VERSION:?err}
+    image: "postgres:${POSTGRES_VERSION:?err}"
     container_name: pgsqlrpws
     ports:
       - 5432:5432
