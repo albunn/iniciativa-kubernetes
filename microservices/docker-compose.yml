@@ -21,12 +21,12 @@ services:
       - review
     environment:
       MOVIE_SERVICE_URI: http://movie:8181
-      REVIEW_SERVICE_URI: http://review:8282
+      REVIEW_SERVICE_URI: http://review:80
 
   movie:
     image: "alexandrebunn/movie:${MOVIEAPP_VERSION:?err}"
-    ports:
-      - 8081:8081
+#    ports:
+#      - 8081:8081
     networks:
       - rpws_net
     depends_on:
@@ -50,8 +50,8 @@ services:
 
   review:
     image: "alexandrebunn/review:${REVIEWAPP_VERSION:?err}"
-    ports:
-      - 8282:80
+#    ports:
+#      - 80:80
     networks:
       - rpws_net
     depends_on:
