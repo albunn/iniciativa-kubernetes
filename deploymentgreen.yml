@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploygreen
+spec:
+  selector:
+    matchLabels:
+      app: green
+  template:
+    metadata:
+      labels:
+        app: green
+    spec:
+      containers:
+      - name: green-app
+        image: kubedevio/nginx-color:green
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+#        ports:
+#        - containerPort: <Port>
